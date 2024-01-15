@@ -1,0 +1,7 @@
+- name: Setup Frontend
+  hosts: frontend
+
+  tasks:
+    - name: Run ping playbook
+      ansible.builtin.import_tasks:
+        file: playbooks/frontend/ping.yml
