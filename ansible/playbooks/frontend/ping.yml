@@ -1,2 +1,0 @@
-- name: Ping the servers
-  ansible.builtin.ping:

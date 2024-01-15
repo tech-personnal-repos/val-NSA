@@ -1,0 +1,2 @@
+- name: Generate .env
+  shell: echo "APP_NAME=Laravel\nAPP_ENV=local\nAPP_KEY=base64:h55oToUypq1BJwhcBAbtCnKscJGGS7xXF3zoDNf/yWE=\nAPP_DEBUG=true\nAPP_URL=http://localhost\nLOG_CHANNEL=stderr\nDB_CONNECTION=mysql\nDB_HOST={{ mysql_host }}\nDB_PORT={{ mysql_port }}\nDB_DATABASE={{ mysql_database }}\nDB_USERNAME={{ mysql_user }}\nDB_PASSWORD={{ mysql_password }}\nBROADCAST_DRIVER=log\nCACHE_DRIVER=file\nQUEUE_CONNECTION=sync\nSESSION_DRIVER=file\nSESSION_LIFETIME=120" > /var/www/html/val-backend/.env

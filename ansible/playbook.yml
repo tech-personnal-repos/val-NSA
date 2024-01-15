@@ -1,7 +1,45 @@
-- name: Setup Frontend
-  hosts: frontend
+# - name: Setup Frontend
+#   hosts: frontend
+
+#   tasks:
+#     - name: Run ping playbook
+#       ansible.builtin.import_tasks:
+#         file: playbooks/frontend/ping.yml
+
+- name: Setup Database
+  hosts: database
+
+  vars:
+    mysql_root_password: password
+    ansible_python_interpreter: /usr/bin/python3.11
 
   tasks:
-    - name: Run ping playbook
+    - name: Install MySQL
       ansible.builtin.import_tasks:
-        file: playbooks/frontend/ping.yml
+        file: playbooks/database/install.yml
+
+    - name: Configure MySQL
+      ansible.builtin.import_tasks:
+        file: playbooks/database/configure.yml
+
+- name: Setup Backend
+  hosts: NSABackend
+
+  vars:
+    mysql_host: 192.168.68.5
+    mysql_port: 3306
+    mysql_database: nsa
+    mysql_user: root
+    mysql_password: password
+    laravel_php_version: 8.0
+    laravel_app_path: /var/www/html/val-backend
+    laravel_repo_url: https://github.com/tech-personnal-repos/val-backend.git
+
+  tasks:
+    - name: Install Backend
+      ansible.builtin.import_tasks:
+        file: playbooks/backend/install.yml
+
+    - name: Configure Backend
+      ansible.builtin.import_tasks:
+        file: playbooks/backend/configure.yml

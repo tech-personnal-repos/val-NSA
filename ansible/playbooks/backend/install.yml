@@ -1,0 +1,35 @@
+- name: Get php apt key
+  shell: "apt install software-properties-common ca-certificates lsb-release apt-transport-https -y; wget -qO - https://packages.sury.org/php/apt.gpg | apt-key add -"
+
+- name: Get php packages
+  shell: "echo 'deb https://packages.sury.org/php/ {{ ansible_distribution_release }} main' | tee /etc/apt/sources.list.d/php.list"
+
+- name: Apt update
+  shell: "apt update"
+
+- name: Install Laravel
+  apt:
+    name: "{{ item }}"
+
+  loop:
+    - git
+    - curl
+    - unzip
+    - php{{ laravel_php_version }}
+    - php{{ laravel_php_version }}-cli
+    - php{{ laravel_php_version }}-mbstring
+    - php{{ laravel_php_version }}-xml
+    - php{{ laravel_php_version }}-curl
+    - php{{ laravel_php_version }}-zip
+    - composer
+
+- name: Clone git Repository
+  git:
+    repo: "{{ laravel_repo_url }}"
+    dest: "{{ laravel_app_path }}"
+    version: main
+
+- name: Install Laravel dependencies
+  shell: "export COMPOSER_ALLOW_SUPERUSER=1 && composer install --working-dir={{ laravel_app_path }}"
+  args:
+    chdir: "{{ laravel_app_path }}"

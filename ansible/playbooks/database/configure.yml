@@ -1,0 +1,7 @@
+# - name: Configure mysql root user
+#   mysql_user:
+#     name: root
+#     host: localhost
+#     password: "{{ mysql_root_password }}"
+#     priv: "*.*:ALL,GRANT"
+#     state: present
