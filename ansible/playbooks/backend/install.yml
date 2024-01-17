@@ -1,11 +1,6 @@
-- name: Get php apt key
-  shell: "apt install software-properties-common ca-certificates lsb-release apt-transport-https -y; wget -qO - https://packages.sury.org/php/apt.gpg | apt-key add -"
-
-- name: Get php packages
-  shell: "echo 'deb https://packages.sury.org/php/ {{ ansible_distribution_release }} main' | tee /etc/apt/sources.list.d/php.list"
-
 - name: Apt update
-  shell: "apt update"
+  apt:
+    update_cache: yes
 
 - name: Install Laravel
   apt:
@@ -21,6 +16,8 @@
     - php{{ laravel_php_version }}-xml
     - php{{ laravel_php_version }}-curl
     - php{{ laravel_php_version }}-zip
+    - php{{ laravel_php_version }}-fpm
+    - php{{ laravel_php_version }}-mysql
     - composer
 
 - name: Clone git Repository
@@ -28,8 +25,39 @@
     repo: "{{ laravel_repo_url }}"
     dest: "{{ laravel_app_path }}"
     version: main
+    accept_hostkey: yes
+  register: repo
 
-- name: Install Laravel dependencies
-  shell: "export COMPOSER_ALLOW_SUPERUSER=1 && composer install --working-dir={{ laravel_app_path }}"
+- name: Update Laravel dependencies
+  shell: "COMPOSER_ALLOW_SUPERUSER=1 bash -c 'composer install --no-dev'"
   args:
     chdir: "{{ laravel_app_path }}"
+  when: repo.changed
+
+- name: Check if .env exists
+  stat:
+    path: "{{ laravel_app_path }}/.env"
+  register: env_file
+
+- name: Generate .env
+  ansible.builtin.import_tasks:
+    file: playbooks/backend/generate_env_file.yml
+  when: env_file.stat.exists == false
+
+- name: "Cache the configuration"
+  shell: "php artisan config:cache"
+  args:
+    chdir: "{{ laravel_app_path }}"
+  when: repo.changed
+
+- name: "Clear the view cache"
+  shell: "php artisan view:clear"
+  args:
+    chdir: "{{ laravel_app_path }}"
+  when: repo.changed
+
+- name: "Run the migrations"
+  shell: "php artisan migrate --force"
+  args:
+    chdir: "{{ laravel_app_path }}"
+  when: repo.changed

@@ -1,7 +1,26 @@
-# - name: Configure mysql root user
-#   mysql_user:
-#     name: root
-#     host: localhost
-#     password: "{{ mysql_root_password }}"
-#     priv: "*.*:ALL,GRANT"
-#     state: present
+- name: Set bind-address in my.cnf
+  lineinfile:
+    path: /etc/mysql/mariadb.conf.d/50-server.cnf
+    regexp: '^bind-address\s*='
+    line: "bind-address = 0.0.0.0"
+    state: present
+  register: bind_address
+
+- name: Restart mysql service
+  service:
+    name: mysql
+    state: restarted
+  when: bind_address.changed
+
+- name: Create database user
+  mysql_user:
+    name: "{{ mysql_user }}"
+    password: "{{ mysql_password }}"
+    priv: "*.*:ALL,GRANT"
+    host: "{{ remote_host_ip }}"
+    state: present
+
+- name: Create database
+  mysql_db:
+    name: "nsa"
+    state: present

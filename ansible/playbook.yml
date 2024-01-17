@@ -1,5 +1,6 @@
 # - name: Setup Frontend
 #   hosts: frontend
+#   user: root
 
 #   tasks:
 #     - name: Run ping playbook
@@ -8,10 +9,12 @@
 
 - name: Setup Database
   hosts: database
+  user: root
 
   vars:
-    mysql_root_password: password
-    ansible_python_interpreter: /usr/bin/python3.11
+    mysql_user: nsa_user
+    mysql_password: password
+    remote_host_ip: 192.168.68.19
 
   tasks:
     - name: Install MySQL
@@ -23,16 +26,17 @@
         file: playbooks/database/configure.yml
 
 - name: Setup Backend
-  hosts: NSABackend
+  hosts: backend
+  user: root
 
   vars:
-    mysql_host: 192.168.68.5
+    mysql_host: 192.168.68.20
     mysql_port: 3306
     mysql_database: nsa
-    mysql_user: root
+    mysql_user: nsa_user
     mysql_password: password
-    laravel_php_version: 8.0
-    laravel_app_path: /var/www/html/val-backend
+    laravel_php_version: 7.4
+    laravel_app_path: /var/www/val-backend
     laravel_repo_url: https://github.com/tech-personnal-repos/val-backend.git
 
   tasks:

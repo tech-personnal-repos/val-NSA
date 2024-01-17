@@ -1,0 +1,55 @@
+- name: Install nginx-server
+  apt: name=nginx state=present
+
+- name: disable apache2-server
+  service: name=apache2 enabled=no state=stopped
+
+- name: Enable nginx service
+  service: name=nginx enabled=yes state=started
+
+- name: Setup laravel conf
+  template:
+    src: templates/laravel-nginx.conf.j2
+    dest: /etc/nginx/sites-available/val-backend.conf
+
+- name: Set owner for /var/www/val-backend/storage
+  file:
+    path: /var/www/val-backend/storage
+    owner: www-data
+    group: www-data
+    state: directory
+    recurse: yes
+
+- name: Set owner for /var/www/val-backend/bootstrap/cache
+  file:
+    path: /var/www/val-backend/bootstrap/cache
+    owner: www-data
+    group: www-data
+    state: directory
+    recurse: yes
+
+- name: Set server name
+  replace:
+    path: /etc/nginx/sites-available/val-backend.conf
+    regexp: '\$SERVER_NAME'
+    replace: "{{ ansible_host }}"
+
+- name: Set app path
+  replace:
+    path: /etc/nginx/sites-available/val-backend.conf
+    regexp: '\$APP_PATH'
+    replace: "{{ laravel_app_path }}/public"
+
+- name: Enable laravel conf
+  file:
+    src: /etc/nginx/sites-available/val-backend.conf
+    dest: /etc/nginx/sites-enabled/val-backend.conf
+    state: link
+
+- name: Disable default conf
+  file:
+    dest: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: restart nginx
+  service: name=nginx state=restarted
