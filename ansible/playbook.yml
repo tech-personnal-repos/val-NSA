@@ -1,49 +1,55 @@
-# - name: Setup Frontend
-#   hosts: frontend
+# - name: Setup Database
+#   hosts: database
 #   user: root
 
+#   vars:
+#     mysql_user: nsa_user
+#     mysql_password: password
+#     remote_host_ip: 192.168.68.19
+
 #   tasks:
-#     - name: Run ping playbook
+#     - name: Install MySQL
 #       ansible.builtin.import_tasks:
-#         file: playbooks/frontend/ping.yml
+#         file: playbooks/database/install.yml
 
-- name: Setup Database
-  hosts: database
+#     - name: Configure MySQL
+#       ansible.builtin.import_tasks:
+#         file: playbooks/database/configure.yml
+
+# - name: Setup Backend
+#   hosts: backend
+#   user: root
+
+#   vars:
+#     mysql_host: 192.168.68.20
+#     mysql_port: 3306
+#     mysql_database: nsa
+#     mysql_user: nsa_user
+#     mysql_password: password
+#     laravel_php_version: 7.4
+#     laravel_app_path: /var/www/val-backend
+#     repo_url: https://github.com/tech-personnal-repos/val-backend.git
+#     branch: main
+
+#   tasks:
+#     - name: Install Backend
+#       ansible.builtin.import_tasks:
+#         file: playbooks/backend/install.yml
+
+#     - name: Configure Backend
+#       ansible.builtin.import_tasks:
+#         file: playbooks/backend/configure.yml
+
+- name: Setup Frontend
+  hosts: frontend
   user: root
 
   vars:
-    mysql_user: nsa_user
-    mysql_password: password
-    remote_host_ip: 192.168.68.19
+    angular_app_path: /var/www/val-frontend
+    repo_url: https://github.com/tech-personnal-repos/val-frontend.git
+    branch: main
 
   tasks:
-    - name: Install MySQL
+    - name: Run ping playbook
       ansible.builtin.import_tasks:
-        file: playbooks/database/install.yml
-
-    - name: Configure MySQL
-      ansible.builtin.import_tasks:
-        file: playbooks/database/configure.yml
-
-- name: Setup Backend
-  hosts: backend
-  user: root
-
-  vars:
-    mysql_host: 192.168.68.20
-    mysql_port: 3306
-    mysql_database: nsa
-    mysql_user: nsa_user
-    mysql_password: password
-    laravel_php_version: 7.4
-    laravel_app_path: /var/www/val-backend
-    laravel_repo_url: https://github.com/tech-personnal-repos/val-backend.git
-
-  tasks:
-    - name: Install Backend
-      ansible.builtin.import_tasks:
-        file: playbooks/backend/install.yml
-
-    - name: Configure Backend
-      ansible.builtin.import_tasks:
-        file: playbooks/backend/configure.yml
+        file: playbooks/frontend/install.yml

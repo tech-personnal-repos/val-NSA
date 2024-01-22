@@ -22,10 +22,9 @@
 
 - name: Clone git Repository
   git:
-    repo: "{{ laravel_repo_url }}"
+    repo: "{{ repo_url }}"
     dest: "{{ laravel_app_path }}"
-    version: main
-    accept_hostkey: yes
+    version: "{{ branch }}"
   register: repo
 
 - name: Update Laravel dependencies

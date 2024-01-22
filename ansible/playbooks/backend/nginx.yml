@@ -9,7 +9,7 @@
 
 - name: Setup laravel conf
   template:
-    src: templates/laravel-nginx.conf.j2
+    src: templates/laravel-nginx.conf.template
     dest: /etc/nginx/sites-available/val-backend.conf
 
 - name: Set owner for /var/www/val-backend/storage

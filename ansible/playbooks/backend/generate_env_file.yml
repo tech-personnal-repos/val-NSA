@@ -1,6 +1,6 @@
 - name: Generate .env
   template:
-    src: templates/.env.j2
+    src: templates/.env.template
     dest: "{{ laravel_app_path }}/.env"
 
 - name: Add env variables
