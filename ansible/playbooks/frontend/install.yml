@@ -21,53 +21,53 @@
   shell: source $HOME/.bashrc && nvm install 10 && nvm alias default 10
   args:
     executable: /bin/bash
-  # when: installed_dependencies.changed
+  when: installed_dependencies.changed
 
 - name: Copy nginx configuration
   template:
     src: templates/nginx.conf.template
     dest: /etc/nginx/sites-available/val-frontend.conf
-  # when: installed_dependencies.changed
+  when: installed_dependencies.changed
 
 - name: Replace $SERVER_NAME in nginx configuration
   replace:
     path: /etc/nginx/sites-available/val-frontend.conf
     regexp: '\$SERVER_NAME'
     replace: "{{ ansible_host }}"
-  # when: installed_dependencies.changed
+  when: installed_dependencies.changed
 
 - name: Replace $ROOT_PATH in nginx configuration
   replace:
     path: /etc/nginx/sites-available/val-frontend.conf
     regexp: '\$ROOT_PATH'
     replace: "{{ angular_app_path }}"
-  # when: installed_dependencies.changed
+  when: installed_dependencies.changed
 
 - name: Replace $BACKEND_URI in nginx configuration
   replace:
     path: /etc/nginx/sites-available/val-frontend.conf
     regexp: '\$BACKEND_URI'
     replace: 192.168.68.19
-  # when: installed_dependencies.changed
+  when: installed_dependencies.changed
 
 - name: Enable nginx configuration
   file:
     src: /etc/nginx/sites-available/val-frontend.conf
     dest: /etc/nginx/sites-enabled/val-frontend.conf
     state: link
-  # when: installed_dependencies.changed
+  when: installed_dependencies.changed
 
 - name: Disable default nginx configuration
   file:
     dest: /etc/nginx/sites-enabled/default
     state: absent
-  # when: installed_dependencies.changed
+  when: installed_dependencies.changed
 
 - name: Restart nginx
   service:
     name: nginx
     state: restarted
-  # when: installed_dependencies.changed
+  when: installed_dependencies.changed
 
 - name: Clone repository
   git:
@@ -80,10 +80,10 @@
   npm:
     path: "{{ angular_app_path }}"
     state: present
-  # when: repo.changed
+  when: repo.changed
 
 - name: Build Angular app
   shell: npm run build:prod
   args:
     chdir: "{{ angular_app_path }}"
-  # when: repo.changed
+  when: repo.changed
