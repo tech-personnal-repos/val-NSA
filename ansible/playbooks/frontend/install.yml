@@ -11,6 +11,7 @@
     - "git"
     - "curl"
     - "build-essential"
+    - "python2"
   register: installed_dependencies
 
 - name: install nvm
@@ -47,7 +48,7 @@
   replace:
     path: /etc/nginx/sites-available/val-frontend.conf
     regexp: '\$BACKEND_URI'
-    replace: 192.168.68.19
+    replace: 192.168.68.23
   when: installed_dependencies.changed
 
 - name: Enable nginx configuration
@@ -80,10 +81,10 @@
   npm:
     path: "{{ angular_app_path }}"
     state: present
-  when: repo.changed
+  # when: repo.changed
 
 - name: Build Angular app
   shell: npm run build:prod
   args:
     chdir: "{{ angular_app_path }}"
-  when: repo.changed
+  # when: repo.changed
