@@ -1,0 +1,11 @@
+- name: Install Angular dependencies
+  npm:
+    path: "{{ angular_app_path }}"
+    state: present
+  when: repo.changed
+
+- name: Build Angular app
+  shell: npm run build:prod
+  args:
+    chdir: "{{ angular_app_path }}"
+  when: repo.changed

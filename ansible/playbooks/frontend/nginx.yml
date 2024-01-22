@@ -1,0 +1,38 @@
+- name: Copy nginx configuration
+  template:
+    src: templates/nginx.conf.template
+    dest: /etc/nginx/sites-available/val-frontend.conf
+
+- name: Replace $SERVER_NAME in nginx configuration
+  replace:
+    path: /etc/nginx/sites-available/val-frontend.conf
+    regexp: '\$SERVER_NAME'
+    replace: "{{ ansible_host }}"
+
+- name: Replace $ROOT_PATH in nginx configuration
+  replace:
+    path: /etc/nginx/sites-available/val-frontend.conf
+    regexp: '\$ROOT_PATH'
+    replace: "{{ angular_app_path }}"
+
+- name: Replace $BACKEND_URI in nginx configuration
+  replace:
+    path: /etc/nginx/sites-available/val-frontend.conf
+    regexp: '\$BACKEND_URI'
+    replace: 192.168.68.23
+
+- name: Enable nginx configuration
+  file:
+    src: /etc/nginx/sites-available/val-frontend.conf
+    dest: /etc/nginx/sites-enabled/val-frontend.conf
+    state: link
+
+- name: Disable default nginx configuration
+  file:
+    dest: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Restart nginx
+  service:
+    name: nginx
+    state: restarted

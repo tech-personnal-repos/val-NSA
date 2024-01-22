@@ -1,0 +1,7 @@
+- name: install nvm
+  shell: curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
+
+- name: install node 10
+  shell: source $HOME/.bashrc && nvm install 10 && nvm alias default 10
+  args:
+    executable: /bin/bash
