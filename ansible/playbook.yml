@@ -5,7 +5,7 @@
   vars:
     mysql_user: nsa_user
     mysql_password: password
-    remote_host_ip: 192.168.68.23
+    remote_host_ip: 134.122.108.193
 
   tasks:
     - name: Install MySQL
@@ -21,7 +21,7 @@
   user: root
 
   vars:
-    mysql_host: 192.168.68.22
+    mysql_host: 139.59.187.23
     mysql_port: 3306
     mysql_database: nsa
     mysql_user: nsa_user
@@ -48,6 +48,7 @@
     angular_app_path: /var/www/val-frontend
     repo_url: https://github.com/tech-personnal-repos/val-frontend.git
     branch: main
+    backend_host: 134.122.108.193
 
   tasks:
     - name: Run ping playbook
