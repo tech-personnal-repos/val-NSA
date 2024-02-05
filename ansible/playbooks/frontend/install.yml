@@ -8,6 +8,7 @@
     state: present
   loop:
     - "nginx"
+    - "unzip"
     - "git"
     - "curl"
     - "build-essential"
